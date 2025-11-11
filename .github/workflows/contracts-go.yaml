@@ -37,6 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CONTRACTS_DIR=$(mktemp -d)
+          cd /tmp
           git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$CONTRACTS_DIR" || \
             (echo "Repository booker-contracts-go not found. Create it first." && exit 1)
           
@@ -54,7 +55,8 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "gen: PR #${{ github.event.pull_request.number }} from booker-contracts"
-            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$BRANCH" --force
+            git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git"
+            git push origin "$BRANCH" --force
           fi
       
       - name: Create prerelease tag
@@ -62,6 +64,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CDIR=$(mktemp -d)
+          cd /tmp
           git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$CDIR" || exit 1
           
           cd "$CDIR"
@@ -73,7 +76,8 @@ jobs:
           
           git checkout -B "pr/${{ github.event.pull_request.number }}" || git checkout "pr/${{ github.event.pull_request.number }}"
           git tag -f "$TAG" || git tag "$TAG"
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$TAG" --force
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git"
+          git push origin "$TAG" --force
 
   release_on_tag:
     if: startsWith(github.ref, 'refs/tags/')
@@ -97,7 +101,8 @@ jobs:
           CONTRACTS_DIR=$(mktemp -d)
           echo "Cloning to: $CONTRACTS_DIR"
           
-          # Clone using GITHUB_TOKEN in URL (works for public repos)
+          # Clone using GITHUB_TOKEN in URL
+          cd /tmp
           git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$CONTRACTS_DIR" || \
             (echo "Repository booker-contracts-go not found. Create it first." && exit 1)
           
@@ -118,10 +123,12 @@ jobs:
           git tag -f "$TAG" || git tag "$TAG"
           
           # Push using token in URL
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" HEAD
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$TAG" --force
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git"
+          git push origin HEAD
+          git push origin "$TAG" --force
           
           # Create GitHub Release
+          export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           gh release create "$TAG" \
             --repo bookingcontrol/booker-contracts-go \
             --title "Release $TAG" \
