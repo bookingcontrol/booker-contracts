@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package booking;
 
-option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/booking";
+option go_package = "github.com/bookingcontrol/booker-contracts-go/booking";
 
 import "common/events.proto";
 

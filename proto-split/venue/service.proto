@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package venue;
 
-option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/venue";
+option go_package = "github.com/bookingcontrol/booker-contracts-go/venue";
 
 import "venue/venue_messages.proto";
 import "venue/room_messages.proto";
