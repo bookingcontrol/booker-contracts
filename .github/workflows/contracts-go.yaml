@@ -35,7 +35,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CONTRACTS_DIR=$(mktemp -d)
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/bookingcontrol/booker-contracts-go.git "$CONTRACTS_DIR" || \
+          git -c credential.helper= \
+            -c credential.helper='!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f' \
+            clone https://github.com/bookingcontrol/booker-contracts-go.git "$CONTRACTS_DIR" || \
             (echo "Repository booker-contracts-go not found. Create it first." && exit 1)
           
           rsync -a --delete gen/go/ "$CONTRACTS_DIR/"
@@ -51,8 +53,10 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "gen: PR #${{ github.event.pull_request.number }} from booker-proto"
-            git push -f origin "$BRANCH"
+            git commit -m "gen: PR #${{ github.event.pull_request.number }} from booker-contracts"
+            git -c credential.helper= \
+              -c credential.helper='!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f' \
+              push origin "$BRANCH" --force
           fi
       
       - name: Create prerelease tag
@@ -60,7 +64,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CDIR=$(mktemp -d)
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/bookingcontrol/booker-contracts-go.git "$CDIR" || exit 1
+          git -c credential.helper= \
+            -c credential.helper='!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f' \
+            clone https://github.com/bookingcontrol/booker-contracts-go.git "$CDIR" || exit 1
           
           cd "$CDIR"
           git config user.name "github-actions[bot]"
@@ -71,7 +77,9 @@ jobs:
           
           git checkout -B "pr/${{ github.event.pull_request.number }}" || git checkout "pr/${{ github.event.pull_request.number }}"
           git tag -f "$TAG" || git tag "$TAG"
-          git push -f origin "$TAG"
+          git -c credential.helper= \
+            -c credential.helper='!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f' \
+            push origin "$TAG" --force
 
   release_on_tag:
     if: startsWith(github.ref, 'refs/tags/')
@@ -91,7 +99,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CONTRACTS_DIR=$(mktemp -d)
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/bookingcontrol/booker-contracts-go.git "$CONTRACTS_DIR" || \
+          
+          # Clone using GITHUB_TOKEN
+          git -c credential.helper= \
+            -c credential.helper='!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f' \
+            clone https://github.com/bookingcontrol/booker-contracts-go.git "$CONTRACTS_DIR" || \
             (echo "Repository booker-contracts-go not found. Create it first." && exit 1)
           
           rsync -a --delete gen/go/ "$CONTRACTS_DIR/"
@@ -105,20 +117,28 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "gen: release $TAG from booker-proto"
+            git commit -m "gen: release $TAG from booker-contracts"
           fi
           
           git tag -f "$TAG" || git tag "$TAG"
-          git push origin HEAD
-          git push -f origin "$TAG"
+          
+          # Push using credential helper
+          git -c credential.helper= \
+            -c credential.helper='!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f' \
+            push origin HEAD
+          
+          git -c credential.helper= \
+            -c credential.helper='!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f' \
+            push origin "$TAG" --force
           
           # Create GitHub Release
+          export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           gh release create "$TAG" \
             --repo bookingcontrol/booker-contracts-go \
             --title "Release $TAG" \
-            --notes "Generated from booker-proto tag $TAG" || \
+            --notes "Generated from booker-contracts tag $TAG" || \
             gh release edit "$TAG" \
               --repo bookingcontrol/booker-contracts-go \
               --title "Release $TAG" \
-              --notes "Generated from booker-proto tag $TAG"
+              --notes "Generated from booker-contracts tag $TAG"
 
