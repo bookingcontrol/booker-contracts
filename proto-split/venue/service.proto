@@ -9,7 +9,6 @@ import "venue/room_messages.proto";
 import "venue/table_messages.proto";
 import "venue/schedule_messages.proto";
 import "venue/availability_messages.proto";
-import "common/events.proto";
 
 service VenueService {
   // Заведения

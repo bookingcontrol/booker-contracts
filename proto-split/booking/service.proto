@@ -5,7 +5,6 @@ package booking;
 option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/booking";
 
 import "booking/messages.proto";
-import "common/events.proto";
 
 service BookingService {
   rpc CreateBooking(CreateBookingRequest) returns (Booking);
