@@ -25,6 +25,8 @@ jobs:
     needs: lint_and_test
     permissions:
       contents: write
+      packages: write
+      repository-projects: write
     steps:
       - uses: actions/checkout@v4
       - uses: bufbuild/buf-setup-action@v1
@@ -86,6 +88,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
+      repository-projects: write
     steps:
       - uses: actions/checkout@v4
         with:
