@@ -4,6 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
+    branches: [main]
     tags:
       - 'v*.*.*'
 
@@ -59,7 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CDIR=$(mktemp -d)
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/nekell3r/booker-contracts-go.git "$CDIR" || exit 1
+          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/bookingcontrol/booker-contracts-go.git "$CDIR" || exit 1
           
           cd "$CDIR"
           git config user.name "github-actions[bot]"
