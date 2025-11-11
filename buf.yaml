@@ -1,7 +1,7 @@
 version: v2
 modules:
   - path: proto-split
-name: buf.build/bookingcontrol/booker-proto
+    name: buf.build/bookingcontrol/booker-proto
 breaking:
   use:
     - FILE
