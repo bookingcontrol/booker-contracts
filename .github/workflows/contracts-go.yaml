@@ -48,16 +48,12 @@ jobs:
           
           # Create/update go.mod if it doesn't exist
           if [ ! -f go.mod ]; then
-            cat > go.mod << 'EOF'
-module github.com/bookingcontrol/booker-contracts-go/v1
-
-go 1.23.0
-
-require (
-	google.golang.org/grpc v1.69.2
-	google.golang.org/protobuf v1.36.8
-)
-EOF
+            printf 'module github.com/bookingcontrol/booker-contracts-go/v1\n\n' > go.mod
+            printf 'go 1.23.0\n\n' >> go.mod
+            printf 'require (\n' >> go.mod
+            printf '\tgoogle.golang.org/grpc v1.69.2\n' >> go.mod
+            printf '\tgoogle.golang.org/protobuf v1.36.8\n' >> go.mod
+            printf ')\n' >> go.mod
           fi
           
           git config user.name "bookingcontrol-bot"
@@ -128,16 +124,12 @@ EOF
           
           # Create/update go.mod if it doesn't exist
           if [ ! -f go.mod ]; then
-            cat > go.mod << 'EOF'
-module github.com/bookingcontrol/booker-contracts-go/v1
-
-go 1.23.0
-
-require (
-	google.golang.org/grpc v1.69.2
-	google.golang.org/protobuf v1.36.8
-)
-EOF
+            printf 'module github.com/bookingcontrol/booker-contracts-go/v1\n\n' > go.mod
+            printf 'go 1.23.0\n\n' >> go.mod
+            printf 'require (\n' >> go.mod
+            printf '\tgoogle.golang.org/grpc v1.69.2\n' >> go.mod
+            printf '\tgoogle.golang.org/protobuf v1.36.8\n' >> go.mod
+            printf ')\n' >> go.mod
           fi
           
           git config user.name "bookingcontrol-bot"
