@@ -48,7 +48,7 @@ jobs:
           
           # Create/update go.mod if it doesn't exist
           if [ ! -f go.mod ]; then
-            printf 'module github.com/bookingcontrol/booker-contracts-go/v1\n\n' > go.mod
+            printf 'module github.com/bookingcontrol/booker-contracts-go\n\n' > go.mod
             printf 'go 1.23.0\n\n' >> go.mod
             printf 'require (\n' >> go.mod
             printf '\tgoogle.golang.org/grpc v1.69.2\n' >> go.mod
@@ -124,7 +124,7 @@ jobs:
           
           # Create/update go.mod if it doesn't exist
           if [ ! -f go.mod ]; then
-            printf 'module github.com/bookingcontrol/booker-contracts-go/v1\n\n' > go.mod
+            printf 'module github.com/bookingcontrol/booker-contracts-go\n\n' > go.mod
             printf 'go 1.23.0\n\n' >> go.mod
             printf 'require (\n' >> go.mod
             printf '\tgoogle.golang.org/grpc v1.69.2\n' >> go.mod
