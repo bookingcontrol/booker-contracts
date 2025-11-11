@@ -41,7 +41,11 @@ jobs:
           git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$CONTRACTS_DIR" || \
             (echo "Repository booker-contracts-go not found. Create it first." && exit 1)
           
-          rsync -a --delete gen/go/ "$CONTRACTS_DIR/"
+          # Copy generated code, excluding .git and .github
+          rsync -a --delete \
+            --exclude ".git" \
+            --exclude ".github" \
+            "${{ github.workspace }}/gen/go/" "$CONTRACTS_DIR/"
           
           cd "$CONTRACTS_DIR"
           git config user.name "github-actions[bot]"
@@ -55,8 +59,7 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "gen: PR #${{ github.event.pull_request.number }} from booker-contracts"
-            git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git"
-            git push origin "$BRANCH" --force
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$BRANCH" --force
           fi
       
       - name: Create prerelease tag
@@ -106,7 +109,12 @@ jobs:
           git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$CONTRACTS_DIR" || \
             (echo "Repository booker-contracts-go not found. Create it first." && exit 1)
           
-          rsync -a --delete gen/go/ "$CONTRACTS_DIR/"
+          # Copy generated code, excluding .git and .github
+          # Note: gen/go/ is relative to workspace root
+          rsync -a --delete \
+            --exclude ".git" \
+            --exclude ".github" \
+            "${{ github.workspace }}/gen/go/" "$CONTRACTS_DIR/"
           
           cd "$CONTRACTS_DIR"
           git config user.name "github-actions[bot]"
@@ -123,9 +131,8 @@ jobs:
           git tag -f "$TAG" || git tag "$TAG"
           
           # Push using token in URL
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git"
-          git push origin HEAD
-          git push origin "$TAG" --force
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" HEAD
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$TAG" --force
           
           # Create GitHub Release
           export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
