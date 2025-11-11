@@ -45,6 +45,21 @@ jobs:
             "${{ github.workspace }}/gen/go/" "$CONTRACTS_DIR/"
           
           cd "$CONTRACTS_DIR"
+          
+          # Create/update go.mod if it doesn't exist
+          if [ ! -f go.mod ]; then
+            cat > go.mod << 'EOF'
+module github.com/bookingcontrol/booker-contracts-go/v1
+
+go 1.23.0
+
+require (
+	google.golang.org/grpc v1.69.2
+	google.golang.org/protobuf v1.36.8
+)
+EOF
+          fi
+          
           git config user.name "bookingcontrol-bot"
           git config user.email "bot@users.noreply.github.com"
           
@@ -110,6 +125,21 @@ jobs:
             "${{ github.workspace }}/gen/go/" "$CONTRACTS_DIR/"
           
           cd "$CONTRACTS_DIR"
+          
+          # Create/update go.mod if it doesn't exist
+          if [ ! -f go.mod ]; then
+            cat > go.mod << 'EOF'
+module github.com/bookingcontrol/booker-contracts-go/v1
+
+go 1.23.0
+
+require (
+	google.golang.org/grpc v1.69.2
+	google.golang.org/protobuf v1.36.8
+)
+EOF
+          fi
+          
           git config user.name "bookingcontrol-bot"
           git config user.email "bot@users.noreply.github.com"
           
