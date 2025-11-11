@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package venue;
+
+option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/venue";
+
+// Расписание работы заведения
+message OpeningHours {
+  string venue_id = 1;
+  repeated DayHours days = 2;
+}
+
+message DayHours {
+  int32 weekday = 1; // 0-6, 0=Sunday
+  string open_time = 2; // HH:MM
+  string close_time = 3; // HH:MM
+}
+
+// Специальные часы работы
+message SpecialHours {
+  string venue_id = 1;
+  string date = 2; // YYYY-MM-DD
+  string open_time = 3;
+  string close_time = 4;
+  bool is_closed = 5;
+}
+
+// Запросы для работы с расписанием
+message SetOpeningHoursRequest {
+  string venue_id = 1;
+  repeated DayHours days = 2;
+}
+
+message GetOpeningHoursRequest {
+  string venue_id = 1;
+}
+
+message SetSpecialHoursRequest {
+  string venue_id = 1;
+  string date = 2;
+  string open_time = 3;
+  string close_time = 4;
+  bool is_closed = 5;
+}
+
+// Ответы для работы с расписанием
+message SetOpeningHoursResponse {
+  bool success = 1;
+}
+
+message SetSpecialHoursResponse {
+  bool success = 1;
+}
+
+

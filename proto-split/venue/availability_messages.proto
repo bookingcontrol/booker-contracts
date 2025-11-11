@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package venue;
+
+option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/venue";
+
+import "common/events.proto";
+
+// Запрос на проверку доступности
+message CheckAvailabilityRequest {
+  string venue_id = 1;
+  common.Slot slot = 2;
+  int32 party_size = 3;
+}
+
+// Ответ с информацией о доступности
+message CheckAvailabilityResponse {
+  repeated TableAvailability tables = 1;
+}
+
+message TableAvailability {
+  common.TableRef table = 1;
+  bool available = 2;
+  string reason = 3;
+  common.TableRef merged_with_table = 4; // If this table can be merged with another table
+}
+
+

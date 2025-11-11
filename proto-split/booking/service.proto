@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package booking;
+
+option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/booking";
+
+import "booking/messages.proto";
+import "common/events.proto";
+
+service BookingService {
+  rpc CreateBooking(CreateBookingRequest) returns (Booking);
+  rpc GetBooking(GetBookingRequest) returns (Booking);
+  rpc ListBookings(ListBookingsRequest) returns (ListBookingsResponse);
+  rpc ConfirmBooking(ConfirmBookingRequest) returns (Booking);
+  rpc CancelBooking(CancelBookingRequest) returns (Booking);
+  rpc MarkSeated(MarkSeatedRequest) returns (Booking);
+  rpc MarkFinished(MarkFinishedRequest) returns (Booking);
+  rpc MarkNoShow(MarkNoShowRequest) returns (Booking);
+  rpc CheckTableAvailability(CheckTableAvailabilityRequest) returns (CheckTableAvailabilityResponse);
+}
+
+

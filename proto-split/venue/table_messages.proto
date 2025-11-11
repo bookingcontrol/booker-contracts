@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package venue;
+
+option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/venue";
+
+// Сущность стола
+message Table {
+  string id = 1;
+  string room_id = 2;
+  string name = 3;
+  int32 capacity = 4;
+  bool can_merge = 5;
+  string zone = 6;
+  int64 created_at = 7;
+  int64 updated_at = 8;
+}
+
+// Запросы для работы со столами
+message CreateTableRequest {
+  string room_id = 1;
+  string name = 2;
+  int32 capacity = 3;
+  bool can_merge = 4;
+  string zone = 5;
+}
+
+message GetTableRequest {
+  string id = 1;
+}
+
+message ListTablesRequest {
+  string room_id = 1;
+  string venue_id = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message UpdateTableRequest {
+  string id = 1;
+  string name = 2;
+  int32 capacity = 3;
+  string zone = 4;
+}
+
+message DeleteTableRequest {
+  string id = 1;
+}
+
+// Ответы для работы со столами
+message ListTablesResponse {
+  repeated Table tables = 1;
+  int32 total = 2;
+}
+
+message DeleteTableResponse {
+  bool success = 1;
+}
+
+message GetTableLayoutRequest {
+  string venue_id = 1;
+  string room_id = 2;
+}
+
+message GetTableLayoutResponse {
+  string room_id = 1;
+  repeated Table tables = 2;
+}
+
+

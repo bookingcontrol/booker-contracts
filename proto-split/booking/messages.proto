@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package booking;
+
+option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/booking";
+
+import "common/events.proto";
+
+// Основная сущность бронирования
+message Booking {
+  string id = 1;
+  string venue_id = 2;
+  common.TableRef table = 3;
+  common.Slot slot = 4;
+  int32 party_size = 5;
+  string customer_name = 6;
+  string customer_phone = 7;
+  string status = 8; // requested, held, confirmed, seated, finished, cancelled, expired, no_show, rejected
+  string comment = 9;
+  string admin_id = 10;
+  int64 created_at = 11;
+  int64 updated_at = 12;
+  int64 expires_at = 13; // для held статуса
+}
+
+// Запросы на создание и получение
+message CreateBookingRequest {
+  string venue_id = 1;
+  common.TableRef table = 2;
+  common.Slot slot = 3;
+  int32 party_size = 4;
+  string customer_name = 5;
+  string customer_phone = 6;
+  string comment = 7;
+  string admin_id = 8;
+  string idempotency_key = 9;
+}
+
+message GetBookingRequest {
+  string id = 1;
+}
+
+message ListBookingsRequest {
+  string venue_id = 1;
+  string date = 2; // YYYY-MM-DD
+  string status = 3;
+  string table_id = 4;
+  int32 limit = 5;
+  int32 offset = 6;
+}
+
+// Запросы на изменение статуса
+message ConfirmBookingRequest {
+  string id = 1;
+  string admin_id = 2;
+}
+
+message CancelBookingRequest {
+  string id = 1;
+  string admin_id = 2;
+  string reason = 3;
+}
+
+message MarkSeatedRequest {
+  string id = 1;
+  string admin_id = 2;
+}
+
+message MarkFinishedRequest {
+  string id = 1;
+  string admin_id = 2;
+}
+
+message MarkNoShowRequest {
+  string id = 1;
+  string admin_id = 2;
+}
+
+// Ответы
+message ListBookingsResponse {
+  repeated Booking bookings = 1;
+  int32 total = 2;
+}
+
+// Проверка доступности столов
+message CheckTableAvailabilityRequest {
+  string venue_id = 1;
+  repeated string table_ids = 2;
+  common.Slot slot = 3;
+}
+
+message CheckTableAvailabilityResponse {
+  repeated TableAvailabilityInfo tables = 1;
+}
+
+message TableAvailabilityInfo {
+  string table_id = 1;
+  bool available = 2;
+  string reason = 3;
+}
+
+

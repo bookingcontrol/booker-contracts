@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package venue;
+
+option go_package = "github.com/bookingcontrol/booker-contracts-go/v1/venue";
+
+import "venue/venue_messages.proto";
+import "venue/room_messages.proto";
+import "venue/table_messages.proto";
+import "venue/schedule_messages.proto";
+import "venue/availability_messages.proto";
+import "common/events.proto";
+
+service VenueService {
+  // Заведения
+  rpc CreateVenue(CreateVenueRequest) returns (Venue);
+  rpc GetVenue(GetVenueRequest) returns (Venue);
+  rpc ListVenues(ListVenuesRequest) returns (ListVenuesResponse);
+  rpc UpdateVenue(UpdateVenueRequest) returns (Venue);
+  rpc DeleteVenue(DeleteVenueRequest) returns (DeleteVenueResponse);
+  
+  // Залы
+  rpc CreateRoom(CreateRoomRequest) returns (Room);
+  rpc GetRoom(GetRoomRequest) returns (Room);
+  rpc ListRooms(ListRoomsRequest) returns (ListRoomsResponse);
+  rpc UpdateRoom(UpdateRoomRequest) returns (Room);
+  rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse);
+  
+  // Столы
+  rpc CreateTable(CreateTableRequest) returns (Table);
+  rpc GetTable(GetTableRequest) returns (Table);
+  rpc ListTables(ListTablesRequest) returns (ListTablesResponse);
+  rpc UpdateTable(UpdateTableRequest) returns (Table);
+  rpc DeleteTable(DeleteTableRequest) returns (DeleteTableResponse);
+  
+  // Расписание
+  rpc SetOpeningHours(SetOpeningHoursRequest) returns (SetOpeningHoursResponse);
+  rpc GetOpeningHours(GetOpeningHoursRequest) returns (OpeningHours);
+  rpc SetSpecialHours(SetSpecialHoursRequest) returns (SetSpecialHoursResponse);
+  
+  // Доступность
+  rpc CheckAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse);
+  rpc GetTableLayout(GetTableLayoutRequest) returns (GetTableLayoutResponse);
+}
+
+
