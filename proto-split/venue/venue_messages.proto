@@ -12,6 +12,7 @@ message Venue {
   string address = 4;
   string phone = 7;
   string email = 8;
+  string description = 9;  // Описание заведения
   int64 created_at = 5;
   int64 updated_at = 6;
 }
@@ -23,6 +24,7 @@ message CreateVenueRequest {
   string address = 3;
   string phone = 4;
   string email = 5;
+  string description = 6;  // Описание заведения (опционально)
 }
 
 message GetVenueRequest {
@@ -40,6 +42,7 @@ message UpdateVenueRequest {
   string address = 3;
   string phone = 4;
   string email = 5;
+  string description = 6;  // Описание заведения (опционально)
 }
 
 message DeleteVenueRequest {
