@@ -41,6 +41,7 @@ message UpdateTableRequest {
   string name = 2;
   int32 capacity = 3;
   string zone = 4;
+  bool can_merge = 5;
 }
 
 message DeleteTableRequest {
