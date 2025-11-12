@@ -1,8 +1,6 @@
 name: contracts-go
 
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
     tags:
@@ -19,22 +17,25 @@ jobs:
       - name: Check breaking changes
         run: buf breaking --against '.git#branch=main' || true
 
-  preview_on_pr:
-    if: github.event_name == 'pull_request'
+  release_on_main:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: lint_and_test
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: bufbuild/buf-setup-action@v1
       - name: Generate Go code
         run: buf generate
-      - name: Push to contracts-go PR branch
+      - name: Sync to contracts-go main
         env:
           PUSH_TOKEN: ${{ secrets.ORG_PUSH_TOKEN }}
         run: |
           CONTRACTS_DIR=$(mktemp -d)
+          echo "Cloning to: $CONTRACTS_DIR"
+          
+          # Clone using PAT
           git clone "https://x-access-token:${PUSH_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$CONTRACTS_DIR" || \
             (echo "Repository booker-contracts-go not found. Create it first." && exit 1)
           
@@ -59,34 +60,17 @@ jobs:
           git config user.name "bookingcontrol-bot"
           git config user.email "bot@users.noreply.github.com"
           
-          BRANCH="pr/${{ github.event.pull_request.number }}"
-          git checkout -B "$BRANCH"
+          git checkout main || git checkout -b main
           git add -A
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "gen: PR #${{ github.event.pull_request.number }} from booker-contracts"
-            git push "https://x-access-token:${PUSH_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$BRANCH" --force
+            git commit -m "gen: sync from booker-contracts main"
           fi
-      
-      - name: Create prerelease tag
-        env:
-          PUSH_TOKEN: ${{ secrets.ORG_PUSH_TOKEN }}
-        run: |
-          CDIR=$(mktemp -d)
-          git clone "https://x-access-token:${PUSH_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$CDIR" || exit 1
           
-          cd "$CDIR"
-          git config user.name "bookingcontrol-bot"
-          git config user.email "bot@users.noreply.github.com"
-          
-          PR="pr.${{ github.event.pull_request.number }}"
-          TAG="v0.0.0-${PR}"
-          
-          git checkout -B "pr/${{ github.event.pull_request.number }}" || git checkout "pr/${{ github.event.pull_request.number }}"
-          git tag -f "$TAG" || git tag "$TAG"
-          git push "https://x-access-token:${PUSH_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$TAG" --force
+          # Push directly to main
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" main
 
   release_on_tag:
     if: startsWith(github.ref, 'refs/tags/')
@@ -135,6 +119,7 @@ jobs:
           git config user.name "bookingcontrol-bot"
           git config user.email "bot@users.noreply.github.com"
           
+          git checkout main || git checkout -b main
           git add -A
           
           if git diff --staged --quiet; then
@@ -145,8 +130,8 @@ jobs:
           
           git tag -f "$TAG" || git tag "$TAG"
           
-          # Push using PAT
-          git push "https://x-access-token:${PUSH_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" HEAD
+          # Push using PAT - push directly to main
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" main
           git push "https://x-access-token:${PUSH_TOKEN}@github.com/bookingcontrol/booker-contracts-go.git" "$TAG" --force
           
           # Create GitHub Release (gh CLI использует GH_TOKEN из env)
